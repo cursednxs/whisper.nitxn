@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>The Whisper— nitin</title>
+  <style>
+    /* Reset & base */
+    :root{
+      --bg:#0000ff;
+      --card:#4a0779;
+      --muted:#00ccff;
+      --accent:#760094;
+      --glass: rgba(255, 255, 255, 0.04);
+      --radius:14px;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#070708 0%, #0f0f10 60%);
+      color:#eee;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      line-height:1.4;
+    }
+
+    /* Header */
+    header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:18px 28px;
+      position:sticky;top:0;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+      backdrop-filter: blur(6px);
+      z-index:40;
+      border-bottom:1px solid rgba(255,255,255,0.03);
+    }
+    .logo{font-weight:700;letter-spacing:0.6px}
+    nav a{color:var(--muted);text-decoration:none;margin-left:18px;font-size:15px}
+    .actions{display:flex;align-items:center;gap:12px}
+
+    /* Hero */
+    .hero{
+      max-width:980px;margin:36px auto;padding:28px;background:var(--glass);
+      border-radius:16px;box-shadow:0 10px 30px rgba(0,0,0,0.6);
+      display:grid;gap:16px;
+    }
+    .hero h1{margin:0;font-size:28px}
+    .hero p{margin:0;color:#d8d8d8}
+
+    /* Controls */
+    .controls{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+    .btn{
+      background:transparent;border:1px solid rgba(255,255,255,0.06);
+      color:var(--muted);padding:8px 12px;border-radius:10px;cursor:pointer;font-size:14px;
+    }
+    .btn.primary{background:rgba(255,255,255,0.06);border-color:transparent;color:#fff}
+    .search{flex:1;min-width:180px}
+
+    /* Grid */
+    .grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;margin-top:18px;
+    }
+    .card{
+      background: var(--card); /* changed from       <!-- Replace your <form id="submitForm"> ... </form> with this -->
+      <form action="https://formspree.io/f/yourFormID" method="POST">
+        <label>Name (optional)</label>
+        <input name="name" type="text" placeholder="e.g. 'C.'">
+      
+        <label>Color</label>
+        <select name="color">
+          <option value="Red">Red</option>
+          <option value="Blue">Blue</option>
+          <option value="Green">Green</option>
+          <option value="Yellow">Yellow</option>
+          <option value="Purple">Purple</option>
+          <option value="Gray">Gray</option>
+        </select>
+      
+        <label>Message</label>
+        <textarea name="message" rows="5" required></textarea>
+      
+        <button type="submit">Send</button>
+      </form>      <!-- Replace your <form id="submitForm"> ... </form> with this -->
+      <form action="https://formspree.io/f/yourFormID" method="POST">
+        <label>Name (optional)</label>
+        <input name="name" type="text" placeholder="e.g. 'C.'">
+      
+        <label>Color</label>
+        <select name="color">
+          <option value="Red">Red</option>
+          <option value="Blue">Blue</option>
+          <option value="Green">Green</option>
+          <option value="Yellow">Yellow</option>
+          <option value="Purple">Purple</option>
+          <option value="Gray">Gray</option>
+        </select>
+      
+        <label>Message</label>
+        <textarea name="message" rows="5" required></textarea>
+      
+        <button type="submit">Send</button>
+      </form>      <!-- Replace your <form id="submitForm"> ... </form> with this -->
+      <form action="https://formspree.io/f/yourFormID" method="POST">
+        <label>Name (optional)</label>
+        <input name="name" type="text" placeholder="e.g. 'C.'">
+      
+        <label>Color</label>
+        <select name="color">
+          <option value="Red">Red</option>
+          <option value="Blue">Blue</option>
+          <option value="Green">Green</option>
+          <option value="Yellow">Yellow</option>
+          <option value="Purple">Purple</option>
+          <option value="Gray">Gray</option>
+        </select>
+      
+        <label>Message</label>
+        <textarea name="message" rows="5" required></textarea>
+      
+        <button type="submit">Send</button>
+      </form>gradient to solid dark */
+      padding:14px;border-radius:12px;min-height:120px;position:relative;overflow:hidden;
+      display:flex;flex-direction:column;gap:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      /* Prevent cards from growing too tall if content is long */
+      max-height: 220px;
+    }
+    .msg-text{flex:1;font-size:15px;white-space:pre-wrap;color:#fff;text-shadow:0 1px 0 rgba(0,0,0,0.4)}
+    .meta{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:rgba(255,255,255,0.8)}
+    .color-dot{width:14px;height:14px;border-radius:50%;display:inline-block;margin-right:8px;border:2px solid rgba(255,255,255,0.12)}
+
+    /* Footer */
+    footer{max-width:980px;margin:36px auto 80px;padding:16px;color:var(--muted);font-size:14px;text-align:center}
+
+    /* Age-gate modal */
+    .modal-backdrop{
+      position:fixed;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.7), rgba(0,0,0,0.85));
+      display:flex;align-items:center;justify-content:center;z-index:80;
+    }
+    .modal{
+      width:min(640px,92%);background:#0b0b0c;padding:22px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+      text-align:center;
+    }
+    .modal h2{margin:0 0 8px 0}
+    .modal p{color:var(--muted);margin:0 0 18px 0}
+    .modal .modal-actions{display:flex;gap:10px;justify-content:center}
+    .small{font-size:13px;color:var(--muted)}
+
+    /* Responsive tweaks */
+    @media (max-width:560px){
+      header{padding:12px}
+      .hero{margin:18px 12px}
+      .grid{grid-template-columns:repeat(2,1fr)}
+    }
+
+    /* Keep the joke and quote text areas scrollable and the button always visible */
+    #jokeText, #quoteText {
+      overflow-y: auto;
+      max-height: 80px;
+      margin-bottom: 8px;
+    }
+    .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Make the joke card larger and remove scroll for joke text */
+    #jokeText {
+      overflow: unset;
+      max-height: none;
+      margin-bottom: 8px;
+      font-size: 16px;
+      min-height: 40px;
+    }
+
+    .card.joke-card {
+      min-height: 220px;
+      max-height: 400px;
+      background: #23294a;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Age gate -->
+  <div id="ageModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Age gate">
+    <div class="modal">
+      <h2>Enter The Whisper by nitin</h2>
+      <p>By entering you certify you're at least 18 and understand some content may be explicit.</p>
+      <div class="modal-actions">
+        <button class="btn" id="declineBtn">NHIII JIII </button>
+        <button class="btn primary" id="acceptBtn">OKEHHH JIII</button>
+      </div>
+      <p class="small"> The Whisper.</p>
+    </div>
+  </div>
+
+  <header>
+    <div style="display:flex;align-items:center;gap:18px">
+      <div class="logo">The Whisper — by nitin</div>
+      <nav aria-label="Main navigation">
+        <a href="#">About</a>
+        <a href="#">Terms</a>
+      </nav>
+    </div>
+
+    <div class="actions">
+      <button class="btn" id="openSubmit">Submit</button>
+      <button class="btn">The Whisper</div></button>
+    </div>
+  </header>
+
+  <main style="padding:18px">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <h1 id="hero-title">The Whisper </h1>
+        <p>
+          This demo displays anonymous submitted messages on the color the sender associates with the person.
+          Use filters to sort by color or name, and click Submit to add a new message locally.
+        </p>
+      </div>
+
+      <div class="controls" role="toolbar" aria-label="Filters">
+        <input id="searchInput" class="btn search" placeholder="Search messages or names…" />
+        <div style="display:flex;gap:8px">
+          <button class="btn" data-filter="all">All</button>
+          <button class="btn" data-filter="red">Red</button>
+          <button class="btn" data-filter="blue">Blue</button>
+          <button class="btn" data-filter="green">Green</button>
+          <button class="btn" id="sortBtn">Sort: Name ↑</button>
+        </div>
+      </div>
+
+      <!-- Add this inside your <section class="hero" ...> just above <div id="grid" ...> -->
+      <div class="card" style="background:#222; margin-bottom:18px; padding:18px; display:flex; flex-direction:column; gap:10px;">
+        <label for="geminiSearch" style="font-weight:bold; color:#fff;">Ask Gemini anything:</label>
+        <div style="display:flex; gap:8px;">
+          <input id="geminiSearch" type="text" placeholder="Type your question..." style="flex:1; padding:10px; border-radius:8px; border:1px solid #444; background:#181828; color:#fff;" />
+          <button id="geminiSearchBtn" class="btn primary" type="button">Ask</button>
+        </div>
+        <div id="geminiAnswer" style="color:#b8eaff; margin-top:8px; min-height:24px;"></div>
+      </div>
+
+      <div id="grid" class="grid" aria-live="polite">
+        <!-- Sample cards (these will be populated by JS as well) -->
+
+        <!-- Random Joke Card -->
+        <article class="card" style="background:#23294a;min-height:120px;display:flex;flex-direction:column;gap:8px;justify-content:space-between;">
+          <div style="font-weight:bold;font-size:16px;margin-bottom:6px;">Need a laugh?</div>
+          <div id="jokeText" class="msg-text" style="color:#fff;">Click below to get a random joke!</div>
+          <button id="jokeBtn" class="btn primary" type="button" style="align-self:flex-end;margin-top:8px;">Get Joke</button>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <!-- Submit modal (hidden) -->
+  <div id="submitModal" class="modal-backdrop" style="display:none" role="dialog" aria-modal="true" aria-label="Submit message">
+    <div class="modal" style="text-align:left">
+      <h3>Submit The Whisper</h3>
+      <p class="small">Submissions are anonymous in this demo and added locally only.</p>
+
+      <form id="submitForm">
+        <label style="display:block;margin:10px 0 6px">Name (optional)</label>
+        <input id="nameField" type="text" placeholder="e.g. 'C.' " style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff" />
+
+        <label style="display:block;margin:10px 0 6px">Color</label>
+        <select id="colorField" style="width:100%;padding:10px;border-radius:8px;background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.06)">
+          <option value="#ff6b6b">Red</option>
+          <option value="#6b8cff">Blue</option>
+          <option value="#66d19e">Green</option>
+          <option value="#ffd36b">Yellow</option>
+          <option value="#c67bff">Purple</option>
+          <option value="#ffffff">Gray</option>
+        </select>
+
+        <label style="display:block;margin:10px 0 6px">Message</label>
+        <textarea id="messageField" rows="5" required style="width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff"></textarea>
+
+        <label style="display:block;margin:10px 0 6px">Image (optional)</label>
+        <input id="imageField" type="file" accept="image/*" style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#fff" />
+
+        <div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end">
+          <button type="button" class="btn" id="closeSubmit">Cancel</button>
+          <button type="submit" class="btn primary">Send (Local)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <div>The Whisper a collection of anonymous messages displayed by color.</div>
+    <div style="margin-top:8px;color:var(--muted)">Contact: info@example.com • PO BOX 00000</div>
+    <div style="margin-top:12px;color:var(--muted);font-size:13px;">
+      <strong>Privacy Notice:</strong> All messages and images are stored locally in your browser and are not uploaded to any server. Please avoid sharing sensitive personal information or images you do not wish to be public.
+    </div>
+  </footer>
+
+  <script>
+    /********************
+     * Demo data & helpers
+     ********************/
+    const SAMPLE = [
+      {name:"A.", color:"#1a2233", text:"I still wake up thinking about the way you smiled. I never said it then."},      // dark blue
+      {name:"S", color:"#18332a", text:"I kept your hoodie for years. It smelled like rain and summer."},                  // dark green
+      {name:"R", color:"#331a1a", text:"You once taught me the word for 'home' in your language. I never forgot it."},     // dark red
+      {name:"", color:"#18332a", text:"I'm sorry for the call at 2 AM that ruined everything."},                           // dark green
+      {name:"M", color:"#23272f", text:"If I could unsay one thing, it would be the last line I wrote to you."}            // fallback dark (unchanged)
+    ];
+
+    const grid = document.getElementById('grid');
+    const searchInput = document.getElementById('searchInput');
+    const sortBtn = document.getElementById('sortBtn');
+    const ageModal = document.getElementById('ageModal');
+    const acceptBtn = document.getElementById('acceptBtn');
+    const declineBtn = document.getElementById('declineBtn');
+
+    let sortAsc = true;
+    let messages = SAMPLE.slice(); // local copy
+
+    /********************
+     * Age gate behavior
+     ********************/
+    acceptBtn.addEventListener('click', ()=> {
+      ageModal.style.display='none';
+    });
+    declineBtn.addEventListener('click', ()=> {
+      // simple behavior: redirect to a neutral page
+      window.location.href = "https://www.example.com";
+    });
+
+    /********************
+     * Render
+     ********************/
+    function renderGrid(list){
+      grid.innerHTML='';
+
+      // --- Insert Joke Card at the top ---
+      const jokeCard = document.createElement('article');
+      jokeCard.className = 'card joke-card'; // add joke-card class
+      jokeCard.style.background = '#23294a';
+      jokeCard.style.minHeight = '220px';
+      jokeCard.style.maxHeight = '400px';
+      jokeCard.style.display = 'flex';
+      jokeCard.style.flexDirection = 'column';
+      jokeCard.style.gap = '8px';
+      jokeCard.style.justifyContent = 'space-between';
+
+      const jokeTitle = document.createElement('div');
+      jokeTitle.style.fontWeight = 'bold';
+      jokeTitle.style.fontSize = '16px';
+      jokeTitle.style.marginBottom = '6px';
+      jokeTitle.textContent = 'Need a laugh?';
+
+      const jokeText = document.createElement('div');
+      jokeText.id = 'jokeText';
+      jokeText.className = 'msg-text';
+      jokeText.style.color = '#fff';
+      jokeText.style.fontSize = '16px';
+      jokeText.style.minHeight = '40px';
+      jokeText.textContent = 'Click below to get a random joke!';
+
+      const jokeBtn = document.createElement('button');
+      jokeBtn.id = 'jokeBtn';
+      jokeBtn.className = 'btn primary';
+      jokeBtn.type = 'button';
+      jokeBtn.style.alignSelf = 'flex-end';
+      jokeBtn.style.marginTop = '8px';
+      jokeBtn.textContent = 'Get Joke';
+
+      jokeCard.appendChild(jokeTitle);
+      jokeCard.appendChild(jokeText);
+      jokeCard.appendChild(jokeBtn);
+
+      grid.appendChild(jokeCard);
+
+      // --- End Joke Card ---
+
+      // --- Insert Romantic Quote Card ---
+      const quoteCard = document.createElement('article');
+      quoteCard.className = 'card';
+      quoteCard.style.background = '#ffd1e3'; // light pink
+      quoteCard.style.minHeight = '120px';
+      quoteCard.style.display = 'flex';
+      quoteCard.style.flexDirection = 'column';
+      quoteCard.style.gap = '8px';
+      quoteCard.style.justifyContent = 'space-between';
+
+      const quoteTitle = document.createElement('div');
+      quoteTitle.style.fontWeight = 'bold';
+      quoteTitle.style.fontSize = '16px';
+      quoteTitle.style.marginBottom = '6px';
+      quoteTitle.style.color = '#b8005c'; // optional: dark pink for contrast
+      quoteTitle.textContent = 'Need some romance?';
+
+      const quoteText = document.createElement('div');
+      quoteText.id = 'quoteText';
+      quoteText.className = 'msg-text';
+      quoteText.style.color = '#b8005c'; // dark pink for text
+      quoteText.textContent = 'Click below to get a romantic quote!';
+
+      const quoteBtn = document.createElement('button');
+      quoteBtn.id = 'quoteBtn';
+      quoteBtn.className = 'btn primary';
+      quoteBtn.type = 'button';
+      quoteBtn.style.alignSelf = 'flex-end';
+      quoteBtn.style.marginTop = '8px';
+      quoteBtn.textContent = 'Get Quote';
+
+      quoteCard.appendChild(quoteTitle);
+      quoteCard.appendChild(quoteText);
+      quoteCard.appendChild(quoteBtn);
+
+      grid.appendChild(quoteCard);
+
+      // --- End Romantic Quote Card ---
+
+      // --- Insert Image Upload Card ---
+      const imageUploadCard = document.createElement('article');
+      imageUploadCard.className = 'card';
+      imageUploadCard.style.background = '#e1f5fe'; // light blue
+      imageUploadCard.style.minHeight = '120px';
+      imageUploadCard.style.display = 'flex';
+      imageUploadCard.style.flexDirection = 'column';
+      imageUploadCard.style.gap = '8px';
+      imageUploadCard.style.justifyContent = 'space-between';
+
+      const imageTitle = document.createElement('div');
+      imageTitle.style.fontWeight = 'bold';
+      imageTitle.style.fontSize = '16px';
+      imageTitle.style.marginBottom = '6px';
+      imageTitle.style.color = '#0277bd'; // blue for contrast
+      imageTitle.textContent = 'Share an Image';
+
+      const imageText = document.createElement('div');
+      imageText.style.color = '#0277bd';
+      imageText.textContent = 'You can post an image with your message using the form below.';
+
+      const imageForm = document.createElement('form');
+      imageForm.style.display = 'flex';
+      imageForm.style.flexDirection = 'column';
+      imageForm.style.gap = '8px';
+
+      const imageInput = document.createElement('input');
+      imageInput.type = 'file';
+      imageInput.accept = 'image/*';
+      imageInput.style.padding = '8px';
+      imageInput.style.borderRadius = '8px';
+      imageInput.style.border = '1px solid #90caf9';
+      imageInput.style.background = '#fff';
+      imageInput.style.color = '#0277bd';
+
+      const imagePreview = document.createElement('img');
+      imagePreview.style.maxWidth = '100%';
+      imagePreview.style.borderRadius = '8px';
+      imagePreview.style.display = 'none';
+      imagePreview.style.marginTop = '8px';
+
+      // --- Add slider for image preview ---
+      const imageSlider = document.createElement('input');
+      imageSlider.type = 'range';
+      imageSlider.min = '50';
+      imageSlider.max = '400';
+      imageSlider.value = '200';
+      imageSlider.style.width = '100%';
+      imageSlider.style.marginTop = '8px';
+      imageSlider.style.display = 'none';
+
+      imageInput.addEventListener('change', function() {
+        if (imageInput.files && imageInput.files[0]) {
+          const file = imageInput.files[0];
+          imagePreview.src = URL.createObjectURL(file);
+          imagePreview.style.display = 'block';
+          imageSlider.style.display = 'block';
+          imagePreview.style.height = imageSlider.value + 'px';
+        } else {
+          imagePreview.style.display = 'none';
+          imageSlider.style.display = 'none';
+        }
+      });
+
+      imageSlider.addEventListener('input', function() {
+        imagePreview.style.height = imageSlider.value + 'px';
+      });
+
+      imageForm.appendChild(imageInput);
+      imageForm.appendChild(imagePreview);
+      imageForm.appendChild(imageSlider);
+
+      imageUploadCard.appendChild(imageTitle);
+      imageUploadCard.appendChild(imageText);
+      imageUploadCard.appendChild(imageForm);
+
+      grid.appendChild(imageUploadCard);
+
+      // --- End Image Upload Card ---
+
+      if(list.length===0){
+        grid.innerHTML += '<div style="color:var(--muted);grid-column:1/-1;padding:18px;border-radius:12px;background:rgba(255,255,255,0.02)">No messages found.</div>';
+        return;
+      }
+      list.forEach((m, idx) => {
+        const el = document.createElement('article');
+        el.className='card';
+        el.setAttribute('data-color', m.color || '#ffffff');
+        el.setAttribute('data-name', (m.name || '').toLowerCase());
+        el.setAttribute('data-text', (m.text || '').toLowerCase());
+
+        // color banner
+        const banner = document.createElement('div');
+        banner.style.position='absolute';
+        banner.style.inset='0 0 auto 0';
+        banner.style.height='36%';
+        banner.style.opacity='0.09';
+        banner.style.background = `linear-gradient(180deg, ${m.color}, transparent)`;
+        el.appendChild(banner);
+
+        const msg = document.createElement('div');
+        msg.className='msg-text';
+        msg.textContent = m.text;
+        el.appendChild(msg);
+
+        const meta = document.createElement('div');
+        meta.className='meta';
+        const left = document.createElement('div');
+        left.style.display='flex';left.style.alignItems='center';
+        const dot = document.createElement('span');
+        dot.className='color-dot'; dot.style.background = m.color;
+        left.appendChild(dot);
+        const name = document.createElement('span');
+        name.textContent = m.name ? m.name : 'Anonymous';
+        name.style.color='inherit';
+        left.appendChild(name);
+
+        const right = document.createElement('div');
+        right.textContent = new Date().getFullYear(); // placeholder
+        meta.appendChild(left);
+        meta.appendChild(right);
+        el.appendChild(meta);
+
+        // Show image if present
+        if (m.imageUrl) {
+          const img = document.createElement('img');
+          img.src = m.imageUrl;
+          img.alt = "User uploaded";
+          img.style.maxWidth = "100%";
+          img.style.borderRadius = "8px";
+          img.style.marginBottom = "8px";
+          el.appendChild(img);
+        }
+
+        grid.appendChild(el);
+      });
+
+      // --- Attach joke button event after rendering ---
+      const jokeBtnNew = document.getElementById('jokeBtn');
+      const jokeTextNew = document.getElementById('jokeText');
+      if(jokeBtnNew && jokeTextNew){
+        jokeBtnNew.addEventListener('click', async () => {
+          jokeBtnNew.disabled = true;
+          jokeTextNew.textContent = "Loading joke...";
+          try {
+            const res = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+            const data = await res.json();
+            if(data && data.joke){
+              jokeTextNew.textContent = data.joke;
+            } else {
+              jokeTextNew.textContent = "Couldn't fetch a joke right now. Try again!";
+            }
+          } catch {
+            jokeTextNew.textContent = "Couldn't fetch a joke right now. Try again!";
+          }
+          jokeBtnNew.disabled = false;
+        });
+      }
+
+      // --- Attach quote button event after rendering ---
+      const quoteBtnNew = document.getElementById('quoteBtn');
+      const quoteTextNew = document.getElementById('quoteText');
+      if(quoteBtnNew && quoteTextNew){
+        const romanticQuotes = [
+          "I love you not only for what you are, but for what I am when I am with you.",
+          "You are my today and all of my tomorrows.",
+          "In all the world, there is no heart for me like yours.",
+          "Every love story is beautiful, but ours is my favorite.",
+          "I have waited for this opportunity for more than half a century, to repeat to you once again my vow of eternal fidelity and everlasting love."
+        ];
+        quoteBtnNew.addEventListener('click', () => {
+          const idx = Math.floor(Math.random() * romanticQuotes.length);
+          quoteTextNew.textContent = romanticQuotes[idx];
+        });
+      }
+    }
+
+    // initial render
+    renderGrid(messages);
+
+    /********************
+     * Filtering and sorting
+     ********************/
+    document.querySelectorAll('[data-filter]').forEach(btn=>{
+      btn.addEventListener('click', e=>{
+        const f = btn.getAttribute('data-filter');
+        if(f === 'all'){
+          applyQuery();
+        } else {
+          applyQuery({colorName:f});
+        }
+      });
+    });
+
+    function applyQuery(opts = {}){
+      const q = (searchInput.value || '').trim().toLowerCase();
+      let out = messages.filter(m=>{
+        const matchQuery = q === '' || (m.text && m.text.toLowerCase().includes(q)) || (m.name && m.name.toLowerCase().includes(q));
+        let matchColor = true;
+        if(opts.colorName){
+          // map basic color names to basic hex ranges (demo)
+          const name = opts.colorName;
+          const map = {
+            red: ['#ff','ff6b6b','#ff6b6b'],
+            blue: ['#6b8cff','#6b8cff'],
+            green: ['#66d19e','#66d19e']
+          };
+          if(map[name]){
+            matchColor = m.color && m.color.toLowerCase().includes(map[name][0].replace('#',''));
+          } else {
+            matchColor = true;
+          }
+        }
+        return matchQuery && matchColor;
+      });
+
+      // sort
+      out.sort((a,b)=>{
+        const na = (a.name||'').toLowerCase();
+        const nb = (b.name||'').toLowerCase();
+        if(na < nb) return sortAsc ? -1 : 1;
+        if(na > nb) return sortAsc ? 1 : -1;
+        return 0;
+      });
+
+      renderGrid(out);
+    }
+
+    searchInput.addEventListener('input', ()=> applyQuery());
+    sortBtn.addEventListener('click', ()=>{
+      sortAsc = !sortAsc;
+      sortBtn.textContent = sortAsc ? 'Sort: Name ↑' : 'Sort: Name ↓';
+      applyQuery();
+    });
+
+    /********************
+     * Submit form (local-only)
+     ********************/
+    const openSubmit = document.getElementById('openSubmit');
+    const submitModal = document.getElementById('submitModal');
+    const closeSubmit = document.getElementById('closeSubmit');
+    const submitForm = document.getElementById('submitForm');
+
+    openSubmit.addEventListener('click', ()=> {
+      submitModal.style.display = 'flex';
+    });
+    closeSubmit.addEventListener('click', ()=> {
+      submitModal.style.display = 'none';
+      submitForm.reset();
+    });
+
+    submitForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('nameField').value.trim();
+      const color = document.getElementById('colorField').value;
+      const text = document.getElementById('messageField').value.trim();
+      const imageInput = document.getElementById('imageField');
+      let imageUrl = '';
+      if (imageInput && imageInput.files && imageInput.files[0]) {
+        const file = imageInput.files[0];
+        imageUrl = URL.createObjectURL(file); // For demo: show image locally
+      }
+      if(!text) return alert('Please enter a message');
+
+      const newMsg = { name, color, text, imageUrl }; // add imageUrl property
+      messages.unshift(newMsg); // add to top
+      applyQuery();
+      submitModal.style.display='none';
+      submitForm.reset();
+    });
+
+    /********************
+     * Accessibility: dismiss modals with Escape
+     ********************/
+    document.addEventListener('keydown', (e) => {
+      if(e.key === 'Escape'){
+        if(submitModal.style.display === 'flex') submitModal.style.display='none';
+      }
+    });
+
+    // small progressive enhancement: allow clicking outside modal to close submit
+    submitModal.addEventListener('click', (ev) => {
+      if(ev.target === submitModal) submitModal.style.display='none';
+    });
+
+    /********************
+     * Random Joke Card
+     ********************/
+    document.addEventListener('DOMContentLoaded', function() {
+      const jokeBtn = document.getElementById('jokeBtn');
+      const jokeText = document.getElementById('jokeText');
+      if(jokeBtn && jokeText){
+        jokeBtn.addEventListener('click', async () => {
+          jokeBtn.disabled = true;
+          jokeText.textContent = "Loading joke...";
+          try {
+            // Fetch a random joke from the official JokeAPI
+            const res = await fetch('https://v2.jokeapi.dev/joke/Any?type=single');
+            const data = await res.json();
+            if(data && data.joke){
+              jokeText.textContent = data.joke;
+            } else {
+              jokeText.textContent = "Couldn't fetch a joke right now. Try again!";
+            }
+          } catch {
+            jokeText.textContent = "Couldn't fetch a joke right now. Try again!";
+          }
+          jokeBtn.disabled = false;
+        });
+      }
+    });
+
+    /********************
+     * Gemini Search Option
+     ********************/
+    const geminiSearchBtn = document.getElementById('geminiSearchBtn');
+    const geminiSearchInput = document.getElementById('geminiSearch');
+    const geminiAnswer = document.getElementById('geminiAnswer');
+
+    if (geminiSearchBtn && geminiSearchInput && geminiAnswer) {
+      geminiSearchBtn.addEventListener('click', async () => {
+        const question = geminiSearchInput.value.trim();
+        if (!question) {
+          geminiAnswer.textContent = "Please enter a question.";
+          return;
+        }
+        geminiAnswer.textContent = "Thinking...";
+        try {
+          // Use your new Gemini API key
+          const apiKey = "AIzaSyBMUyilUqC53LnD9wQrroHQJLDz1CEtksQ";
+          const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=" + apiKey, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+              contents: [{parts: [{text: question}]}]
+            })
+          });
+          const data = await res.json();
+          if (data && data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts && data.candidates[0].content.parts[0].text) {
+            geminiAnswer.textContent = data.candidates[0].content.parts[0].text;
+          } else {
+            geminiAnswer.textContent = "Sorry, no answer found.";
+          }
+        } catch (e) {
+          geminiAnswer.textContent = "Error fetching answer.";
+        }
+      });
+    }
+
+    // Your JavaScript code here
+    alert('Hello from JavaScript!');
+  </script>
+</body>
+</html>
